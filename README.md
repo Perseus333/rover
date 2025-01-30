@@ -1,2 +1,4 @@
 # M.E.M.E.
-An arduino powered rover
+*(Mechanized Experimental Mars Explorer)*
+
+Obstacle avoidance software for an arduino powered rover.
