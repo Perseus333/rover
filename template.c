@@ -5,6 +5,7 @@
 /* `stdint.h` should be replaced with `arduino.h`
 As it's only purpose is to use uint8_t
 which arduino already replaces with `byte`
+This also replaces the need for the map function
 */
 #include <stdint.h>
 
@@ -32,6 +33,7 @@ const int mapSideLength = 100; // For debugging purposes only
 typedef struct DataPacket DataPacket;
 typedef struct Position Position;
 
+// Custom data types are a bit redundant but can be added
 
 // ALL DISTANCES IN MILLIMETRES (mm)
 struct Position {
@@ -44,10 +46,7 @@ struct Position {
 
 // ALL ANGLES IN DEGREES (º)
 struct DataPacket {
-    Position currentPos;
-    short vehicleRotation;
-    unsigned short obstacleDistance;
-    short sensorRotation;
+    // Add the config
 };
 
 // Initializing global variables
@@ -60,7 +59,7 @@ unsigned short obstacleCapacity = INITIAL_CAPACITY;
 // Distance should be in mm
 short getDistance() {
     /*
-    TODO: Arduino shenaningans
+    TODO: Arduino shenaningans :3
     */
     
     //Temporary code - randomizes it
@@ -86,6 +85,7 @@ float toRadians(short angleInDegrees) {
     return angleInRadians;
 }
 
+// TEMPORARY CODE! -- DO NOT USE!
 Position generateObstacle(DataPacket data) {
 
     short overallRotation = data.sensorRotation + data.vehicleRotation;
@@ -100,87 +100,23 @@ Position generateObstacle(DataPacket data) {
 }
 
 void appendObstacle(Position obstacle) {
-    // If we need more space, we assign another bit for the `obstacles` list
-    if (obstacleAmount >= obstacleCapacity || (obstacleCapacity < MAX_MEMORY)) {
-        // Adding another bit doubles the obstacle capacity
-        obstacleCapacity *= 2;
-        // The memory that we need to reallocate is that of the size of the struct of Position
-        // times the amount of elements that we have in the array
-        // the size of Position should be 4 bytes (2 shorts; 2 bytes each) * obstacleCapacity
-        Position* temp = realloc(obstacles, obstacleCapacity * sizeof(Position));
-        if (!temp) {
-            printf("Couldn't allocate memory");
-            exit(1);
-        } 
-        obstacles = temp;
-    }
-    
-    // Replaces old objects instead of overflowing
-    obstacleAmount = obstacleAmount % obstacleCapacity;
-
-    obstacles[obstacleAmount].x = obstacle.x;
-    obstacles[obstacleAmount].y = obstacle.y;
-
+    // Add later
     obstacleAmount++;
 }
 
 void scanEnvironment() {
-    // Angles are in degrees (0-360º)
-    const short ANGLE_STEP = FULL_ROTATION / SCANS_PER_SWIPE;
-    
-    for (uint8_t i = 1; i <= SCANS_PER_SWIPE; i++) {
-        
-        short obstacleDistance = getDistance();
-        short sensorRotation = ANGLE_STEP * i;
-        
-        DataPacket positionFeedback;
-        positionFeedback.currentPos = currentPos;
-        positionFeedback.obstacleDistance = obstacleDistance;
-        positionFeedback.sensorRotation = sensorRotation;
-        positionFeedback.vehicleRotation = vehicleRotation;
-        
-        Position obstaclePosition = generateObstacle(positionFeedback);
-        appendObstacle(obstaclePosition);
-    }
+    // Add later
 }
 
-// Custom implementation of map() function from `arduino.h`
+// Custom implementation of map() function from `arduino.h` because I was to lazy to import header files in windows (it sucks)
+// The day C comes with a package manager, then I'll consider it
 short map(short value, short initialLow, short initialHigh, short finalLow, short finalHigh) {
     short valueMapped = (short)((finalHigh - finalLow) * ((float)(value - initialLow) / (float)(initialHigh - initialLow)) + finalLow);
     return valueMapped;
 }
 
-// TEMPORARY - ChatGPT Code! For testing and debugging purposes
 void updateObstacleMap(short updateAmount) {
-    char grid[mapSideLength][mapSideLength];
-
-    // Step 1: Fill grid with '.'
-    for (int y = 0; y < mapSideLength; y++) {
-        for (int x = 0; x < mapSideLength; x++) {
-            grid[y][x] = '.';
-        }
-    }
-
-    // Step 2: Map obstacles to the grid
-    for (int i = 0; i < obstacleAmount; i++) {
-        short mappedX = map(obstacles[i].x, -32766, 32766, 0, mapSideLength - 1);
-        short mappedY = map(obstacles[i].y, -32766, 32766, 0, mapSideLength - 1);
-
-        if ((mappedX >= 0) && (mappedX < mapSideLength) && (mappedY >= 0) && (mappedY < mapSideLength)) {
-            grid[mappedY][mappedX] = '#';  // Place an obstacle
-        }
-    }
-
-    grid[map(currentPos.y, -32766, 32766, 0, mapSideLength - 1)][map(currentPos.y, -32766, 32766, 0, mapSideLength - 1)] = 'X';
-
-    // Step 3: Print the grid
-    for (int y = 0; y < mapSideLength; y++) {
-        for (int x = 0; x < mapSideLength; x++) {
-            putchar(grid[y][x]);
-            putchar(' ');  // Space for better visualization
-        }
-        putchar('\n');  // New line after each row
-    }
+    // Add later
 }
 
 // Should probably return something
