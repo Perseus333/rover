@@ -7,6 +7,7 @@ As it's only purpose is to use uint8_t
 which arduino already replaces with `byte`
 */
 #include <stdint.h>
+#include "helper.h"
 
 /*
 Integer Data Types
@@ -16,18 +17,12 @@ Efficient memory management is crucial in microcontrollers
 0 to 64000: unsigned short (2 bytes)
 -32000 to 32000: short (2 bytes)
 angles and rotations: short (2 bytes)
-
 */
-const float PI = 3.141592;
-const float SPEED_OF_SOUND = 0.343f; // mm/s
-const short FULL_ROTATION = 180; // in degrees
-const uint8_t SCANS_PER_SWIPE = 32; // Tweak for more accuracy
+
+// Tweak this values
+const uint8_t SCANS_PER_SWIPE = 10; // Tweak for more accuracy
 const unsigned short MAX_MEMORY = 1020; // Tweak for memory consuption (up to 2^16)
 const uint8_t INITIAL_CAPACITY = 255; // 2^8-1; max values for 1 byte
-const short MAX_RESPONSE_TIME = (short)((1 << 15) * SPEED_OF_SOUND / 2); // Avoid short overflow
-// `1 << 15` means that we shift the bit 1, 15 times. This results in the number 2^15
-
-const int mapSideLength = 100; // For debugging purposes only
 
 typedef struct DataPacket DataPacket;
 typedef struct Position Position;
@@ -72,18 +67,13 @@ short getDistance() {
     short distance; 
     if (responseTime > MAX_RESPONSE_TIME) {
         // sets distance to be 2^15 which is the max number of a `short` type
-        distance = (1 << 15);
+        distance = (1 << 15) - 1;
     }
     else {
         distance = (short)(responseTime / SPEED_OF_SOUND) * 2;
     }
 
     return distance;
-}
-
-float toRadians(short angleInDegrees) {
-    float angleInRadians = angleInDegrees * PI / 180;
-    return angleInRadians;
 }
 
 Position generateObstacle(DataPacket data) {
@@ -144,42 +134,35 @@ void scanEnvironment() {
     }
 }
 
-// Custom implementation of map() function from `arduino.h`
-short map(short value, short initialLow, short initialHigh, short finalLow, short finalHigh) {
-    short valueMapped = (short)((finalHigh - finalLow) * ((float)(value - initialLow) / (float)(initialHigh - initialLow)) + finalLow);
-    return valueMapped;
-}
-
-// TEMPORARY - ChatGPT Code! For testing and debugging purposes
+// Updates the obstacle map with the obstacles that were detected
 void updateObstacleMap(short updateAmount) {
     char grid[mapSideLength][mapSideLength];
 
-    // Step 1: Fill grid with '.'
     for (int y = 0; y < mapSideLength; y++) {
         for (int x = 0; x < mapSideLength; x++) {
             grid[y][x] = '.';
         }
     }
 
-    // Step 2: Map obstacles to the grid
     for (int i = 0; i < obstacleAmount; i++) {
         short mappedX = map(obstacles[i].x, -32766, 32766, 0, mapSideLength - 1);
         short mappedY = map(obstacles[i].y, -32766, 32766, 0, mapSideLength - 1);
 
         if ((mappedX >= 0) && (mappedX < mapSideLength) && (mappedY >= 0) && (mappedY < mapSideLength)) {
-            grid[mappedY][mappedX] = '#';  // Place an obstacle
+            grid[mappedY][mappedX] = '#';
         }
     }
 
-    grid[map(currentPos.y, -32766, 32766, 0, mapSideLength - 1)][map(currentPos.y, -32766, 32766, 0, mapSideLength - 1)] = 'X';
+    //      initial value, min initial,   max initial, min target, max target 
+    grid[map(currentPos.y, MIN_SHORT_NUM, MAX_SHORT_NUM, 0,    mapSideLength - 1)]
+        [map(currentPos.x, MIN_SHORT_NUM, MAX_SHORT_NUM, 0,    mapSideLength - 1)] = 'X';
 
-    // Step 3: Print the grid
     for (int y = 0; y < mapSideLength; y++) {
         for (int x = 0; x < mapSideLength; x++) {
             putchar(grid[y][x]);
-            putchar(' ');  // Space for better visualization
+            putchar(' ');
         }
-        putchar('\n');  // New line after each row
+        putchar('\n');
     }
 }
 
