@@ -25,10 +25,18 @@ Efficient memory management is crucial in microcontrollers
 angles and rotations: short (2 bytes)
 */
 
-// Tweak this values
-const uint8_t SCANS_PER_SWIPE = 10; // Tweak for more accuracy
-const unsigned short MAX_MEMORY = 1020; // Tweak for memory consuption (up to 2^16)
-const uint8_t INITIAL_CAPACITY = 255; // 2^8-1; max values for 1 byte
+// Change this values by specifying them on the make command
+#ifndef SCANS_PER_SWIPE
+#define SCANS_PER_SWIPE 10 // Increase for more accuracy but lower speeds
+#endif
+
+#ifndef MAX_MEMORY
+#define MAX_MEMORY 1020 // Affects memory usage
+#endif
+
+#ifndef INTIAL_CAPACITY
+#define INITIAL_CAPACITY 255 // 2^8-1; max values for 1 byte
+#endif
 
 typedef struct DataPacket DataPacket;
 typedef struct Position Position;

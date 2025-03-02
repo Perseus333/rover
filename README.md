@@ -27,3 +27,9 @@ Now that you are in the root folder of the project, you can finally build it wit
 ```bash
 make
 ```
+
+## Usage
+
+After you have built the source, you can execute the program by executing the binary which will be stored in the `/bin` directory. You can run it with:
+
+`./bin/main.exe`
