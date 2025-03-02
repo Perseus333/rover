@@ -43,3 +43,15 @@ You can specify them when you run the code by writing:
 ```bash
 make SCANS_PER_SWIPE=8 MAX_MEMORY=100
 ```
+
+### Configuring build
+
+This project has been written assuming that you don't have an Arduino in hand to program it. So, that's why it defaults on creating fake Arduino libraries so that the compiler doesn't complain about missing header files or undeclared functions. This, however, allows you to paste the entire code into an IDE without having to include the missing Arduino related functions. Pretty neat!
+
+If you want to disable this feature when building because you are programming in Arduino IDE or similar, then just add the `TESTING=false` flag at the end of the `make` command, like so:
+
+```bash
+make TESTING=false
+```
+
+This will prevent the fake libraries from loading and it will use instead the real ones.

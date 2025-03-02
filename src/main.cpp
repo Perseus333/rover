@@ -11,9 +11,13 @@ which arduino already replaces with `byte`
 */
 #include <stdint.h>
 
+// The necessary hardware libraries
+#include "Arduino.h"
+#include "Servo.h"
+
 // Include the custom libraries (header files)
-#include "..\include\utils.hpp"
-#include "..\include\constants.hpp"
+#include "utils.h"
+#include "constants.h"
 
 /*
 Integer Data Types
@@ -26,6 +30,7 @@ angles and rotations: short (2 bytes)
 */
 
 // Change this values by specifying them on the make command
+// Fallback for Makefile, usually this values aren't read
 #ifndef SCANS_PER_SWIPE
 #define SCANS_PER_SWIPE 10 // Increase for more accuracy but lower speeds
 #endif
