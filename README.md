@@ -33,3 +33,13 @@ make
 After you have built the source, you can execute the program by executing the binary which will be stored in the `/bin` directory. You can run it with:
 
 `./bin/main.exe`
+
+### Using flags
+
+If you would like to change some of the variables at compile time, to test with different configurations you can do so effortlessly by specifying them then building the code. The variables that are modifiable should appear in the `makefile`. If you don't specify them, they will default to their fallback values.
+
+You can specify them when you run the code by writing:
+
+```bash
+make SCANS_PER_SWIPE=8 MAX_MEMORY=100
+```
