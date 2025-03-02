@@ -1,13 +1,19 @@
+// map.c
+// The main file for the rover
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 /* `stdint.h` should be replaced with `arduino.h`
-As it's only purpose is to use uint8_t
+As it's only purpose is to use the uint8_t datatype
 which arduino already replaces with `byte`
 */
 #include <stdint.h>
-#include "helper.h"
+
+// Include the custom libraries (header files)
+#include "..\include\utils.hpp"
+#include "..\include\constants.hpp"
 
 /*
 Integer Data Types
@@ -51,6 +57,8 @@ Position* obstacles = NULL;
 unsigned short obstacleAmount = 0;
 short vehicleRotation = 0;
 unsigned short obstacleCapacity = INITIAL_CAPACITY;
+// Sets all the elements in the grid as . for better visibility
+char grid[mapSideLength][mapSideLength] = {'.'};
 
 // Distance should be in mm
 short getDistance() {
@@ -90,19 +98,25 @@ Position generateObstacle(DataPacket data) {
 }
 
 void appendObstacle(Position obstacle) {
-    // If we need more space, we assign another bit for the `obstacles` list
-    if (obstacleAmount >= obstacleCapacity || (obstacleCapacity < MAX_MEMORY)) {
-        // Adding another bit doubles the obstacle capacity
-        obstacleCapacity *= 2;
+    // If we need more space, we assign another bit (double it) for the `obstacles` list
+    if (obstacleAmount >= obstacleCapacity && obstacleCapacity < MAX_MEMORY) {
+
+        // Only doubles the memory if it it won't exceed the `MAX_MEMORY`
+        if (obstacleCapacity*2 < MAX_MEMORY) {
+            obstacleCapacity *= 2;
+        }
         // The memory that we need to reallocate is that of the size of the struct of Position
         // times the amount of elements that we have in the array
         // the size of Position should be 4 bytes (2 shorts; 2 bytes each) * obstacleCapacity
-        Position* temp = realloc(obstacles, obstacleCapacity * sizeof(Position));
+        Position* temp = (Position*)realloc(obstacles, obstacleCapacity * sizeof(Position));
         if (!temp) {
             printf("Couldn't allocate memory");
-            exit(1);
+            // Blink arduino LED rapidly or something to signal that there is an error
         } 
-        obstacles = temp;
+        // Only update the obstacles if there hasn't been an error with the memory
+        else {
+            obstacles = temp;
+        }
     }
     
     // Replaces old objects instead of overflowing
@@ -136,17 +150,10 @@ void scanEnvironment() {
 
 // Updates the obstacle map with the obstacles that were detected
 void updateObstacleMap(short updateAmount) {
-    char grid[mapSideLength][mapSideLength];
 
-    for (int y = 0; y < mapSideLength; y++) {
-        for (int x = 0; x < mapSideLength; x++) {
-            grid[y][x] = '.';
-        }
-    }
-
-    for (int i = 0; i < obstacleAmount; i++) {
-        short mappedX = map(obstacles[i].x, -32766, 32766, 0, mapSideLength - 1);
-        short mappedY = map(obstacles[i].y, -32766, 32766, 0, mapSideLength - 1);
+    for (int newObstacle = 0; newObstacle < updateAmount; newObstacle++) {
+        short mappedX = map(obstacles[newObstacle].x, -32766, 32766, 0, mapSideLength - 1);
+        short mappedY = map(obstacles[newObstacle].y, -32766, 32766, 0, mapSideLength - 1);
 
         if ((mappedX >= 0) && (mappedX < mapSideLength) && (mappedY >= 0) && (mappedY < mapSideLength)) {
             grid[mappedY][mappedX] = '#';
@@ -182,7 +189,7 @@ void setup() {
     currentPos.y = 0;
     
     // Allocate memory for obstacles
-    obstacles = malloc(INITIAL_CAPACITY * sizeof(Position));
+    obstacles = (Position*)malloc(INITIAL_CAPACITY * sizeof(Position));
 
     // TEMPORARY - To initialize the time for "random" numbers for `getDistance()`
     srand(clock());
