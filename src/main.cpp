@@ -149,7 +149,7 @@ void scanEnvironment() {
 }
 
 // Updates the obstacle map with the obstacles that were detected
-void updateObstacleMap(short updateAmount) {
+void updateObstacleDisplay(short updateAmount) {
 
     for (int newObstacle = 0; newObstacle < updateAmount; newObstacle++) {
         short mappedX = map(obstacles[newObstacle].x, -32766, 32766, 0, mapSideLength - 1);
@@ -198,7 +198,7 @@ void setup() {
 // The loop function in arduino
 void loop() {
     scanEnvironment();
-    updateObstacleMap(SCANS_PER_SWIPE);
+    updateObstacleDisplay(SCANS_PER_SWIPE);
     pathFind();
     moveVehicle();
 }

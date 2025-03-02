@@ -1,0 +1,12 @@
+[submodule "lib/lib/ArduinoCore-avr"]
+	path = lib/lib/ArduinoCore-avr
+	url = https://github.com/arduino/ArduinoCore-avr.git
+[submodule "lib/lib/Servo"]
+	path = lib/lib/Servo
+	url = https://github.com/arduino-libraries/Servo.git
+[submodule "lib/Servo"]
+	path = lib/Servo
+	url = https://github.com/arduino-libraries/Servo.git
+[submodule "lib/ArduinoCore-avr"]
+	path = lib/ArduinoCore-avr
+	url = https://github.com/arduino/ArduinoCore-avr.git
