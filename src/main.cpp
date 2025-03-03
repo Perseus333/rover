@@ -18,7 +18,6 @@ which arduino already replaces with `byte`
 #include "utils.h"
 #include "constants.h"
 #include "hardware.h"
-#include "pathfinding.h"
 
 /*
 Integer Data Types
@@ -54,10 +53,7 @@ unsigned short obstacleCapacity = INITIAL_CAPACITY;
 char grid[mapSideLength][mapSideLength] = {'.'};
 
 // Distance should be in mm
-short getDistance() {
-    /*
-    TODO: Arduino shenaningans
-    */
+short getDistanceTESTING() {
     
     //Temporary code - randomizes it
     long responseTime = rand() % MAX_RESPONSE_TIME;
@@ -126,8 +122,7 @@ void scanEnvironment() {
     const short ANGLE_STEP = FULL_ROTATION / SCANS_PER_SWIPE;
     
     for (uint8_t i = 1; i <= SCANS_PER_SWIPE; i++) {
-        
-        short obstacleDistance = getDistance();
+        short obstacleDistance = (TESTING) ? getDistanceTESTING() : detectDistance();
         short sensorRotation = ANGLE_STEP * i;
         
         DataPacket positionFeedback;

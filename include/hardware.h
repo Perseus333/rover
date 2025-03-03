@@ -5,6 +5,8 @@
 #define HARDWARE_H
 
 void readCommand();
-void runCommand(char command);
+void runCommand(char command, bool log);
+int detectDistance();
+int scan();
 
 #endif // HARDWARE_H

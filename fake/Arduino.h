@@ -19,6 +19,9 @@ class FakeSerial {
         void print(const char* msg) {
             (void)msg;
         }
+        void print(int msg) {
+            (void)msg;
+        }
         void println(char msg) {
             (void)msg;
         }
@@ -68,6 +71,7 @@ inline void delayMicroseconds(int time) {
 inline int pulseIn(byte pin, void* arg) {
     (void)pin;
     (void)arg;
+    return 0;
 }
 
 extern void* INPUT;

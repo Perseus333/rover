@@ -6,7 +6,7 @@ CFLAGS   = -g -grecord-gcc-switches -O2 -Wall -Wextra -pedantic
 CFLAGS  += -I./include
 
 # Source files
-SRC = src/main.cpp src/hardware.cpp src/pathfinding.cpp src/utils.cpp
+SRC = src/main.cpp src/hardware.cpp src/utils.cpp
 # Output executable
 OUT = bin/main
 

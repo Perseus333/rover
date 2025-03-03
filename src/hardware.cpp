@@ -6,6 +6,11 @@
 
 // You can paste the code below this into the arduino setup and it will work right off the bat
 
+// hardware.cpp
+// Functions related to physical components
+
+// You can paste the code below this into the arduino setup and it will work right off the bat
+
 // Defining the pins
 const byte ENABLE_RIGHT = 3;
 const byte RIGHT_B = 4;
@@ -27,6 +32,8 @@ Servo sensorServo;
 // Speed of sound - useful for calculating distances with HC-SR04
 const float SPEED_OF_SOUND = 0.343f; // mm/s
 
+char lastCommand = 'f';
+
 // Reads a character and interprets it as a command
 
 char readCommand() {
@@ -40,7 +47,7 @@ char readCommand() {
 }
 
 // Executes the instructions
-void runCommand(char command) {
+void runCommand(char command, bool log = true) {
 	// A switch statement is a more readable version
 	// of the else if
 	switch (command) {
@@ -85,6 +92,9 @@ void runCommand(char command) {
 		digitalWrite(RIGHT_LED, LOW);
 		break;
 	}
+  	if (log) {
+  		lastCommand = command;
+    }
 }
 
 int detectDistance() {
@@ -109,20 +119,24 @@ int detectDistance() {
 
 // Does a full swipe
 // The sensor will be mounted on the servo
-void scan() {
+int scan() {
 	int distances[SCANS_PER_SWIPE] = {};
+  	int distanceSum = 0;
 	sensorServo.write(180);
-	
+	Serial.print("d: ");
 	for (int i = 0; i < SCANS_PER_SWIPE; i++) {
 		distances[i] = detectDistance();
-		
-		// Prints the distance to the obstacle
-		Serial.print("d: ");
-		Serial.println(distances[i]);
+		distanceSum += distances[i];
+		// Prints the distance to the obstacle;
+		Serial.print(distances[i]);
+      	Serial.print(", ");
 	}
+  	Serial.println("");
 	delay_(2); // Remove the underscore ("_") when running
 	// Returns to the original position
 	sensorServo.write(0);
+  	int avgDistance = (int)(distanceSum / SCANS_PER_SWIPE);
+  	return avgDistance;
 }
 
 // setup and loop functions are only for demonstrative purposes
@@ -166,6 +180,12 @@ void setup() {
 }
 
 void loop() {
-  runCommand(readCommand());
-  scan();
+    int avgDistance = scan();
+    if (avgDistance > 500) {
+    	runCommand(lastCommand);
+      	runCommand(readCommand());
+    }
+    else {
+      	runCommand('b', false);
+    }
 }
