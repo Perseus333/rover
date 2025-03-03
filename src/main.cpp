@@ -13,11 +13,12 @@ which arduino already replaces with `byte`
 
 // The necessary hardware libraries
 #include "Arduino.h"
-#include "Servo.h"
 
 // Include the custom libraries (header files)
 #include "utils.h"
 #include "constants.h"
+#include "hardware.h"
+#include "pathfinding.h"
 
 /*
 Integer Data Types
@@ -42,27 +43,6 @@ angles and rotations: short (2 bytes)
 #ifndef INTIAL_CAPACITY
 #define INITIAL_CAPACITY 255 // 2^8-1; max values for 1 byte
 #endif
-
-typedef struct DataPacket DataPacket;
-typedef struct Position Position;
-
-
-// ALL DISTANCES IN MILLIMETRES (mm)
-struct Position {
-    // short allows a radius of 32m of distance representation.
-    // The course will be much shorter, and this is half
-    // as memory heavy as regular `int`
-    short x;
-    short y;
-};
-
-// ALL ANGLES IN DEGREES (º)
-struct DataPacket {
-    Position currentPos;
-    short vehicleRotation;
-    unsigned short obstacleDistance;
-    short sensorRotation;
-};
 
 // Initializing global variables
 Position currentPos;
@@ -196,7 +176,7 @@ void moveVehicle() {
 }
 
 // The setup function in arduino
-void setup() {
+void setup_() {
 
     currentPos.x = 0;
     currentPos.y = 0;
@@ -209,7 +189,7 @@ void setup() {
 }
 
 // The loop function in arduino
-void loop() {
+void loop_() {
     scanEnvironment();
     updateObstacleDisplay(SCANS_PER_SWIPE);
     pathFind();
@@ -220,11 +200,11 @@ void loop() {
 // it's just here for testing purposes
 int main() {
 
-    setup();
+    setup_();
 
     // same as `while true`, but without having to include stdbool.h
     for (;;) {
-        loop();
+        loop_();
         // waits for user input (testing purposes only)
         char ch = getchar();
         if (ch) {} // To not raise compiler warning for unused variable

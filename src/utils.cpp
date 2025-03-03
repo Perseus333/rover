@@ -1,7 +1,7 @@
 // utils.cpp
 // Helper functions
 
-#include "..\include\constants.hpp"
+#include "constants.h"
 
 float toRadians(short angleInDegrees) {
     float angleInRadians = angleInDegrees * PI / 180;
