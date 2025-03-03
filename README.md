@@ -54,4 +54,47 @@ If you want to disable this feature when building because you are programming in
 make TESTING=false
 ```
 
-This will prevent the fake libraries from loading and it will use instead the real ones.
+This will prevent the fake libraries from loading and it will use instead the real ones. It will also modify some functions and introduce randomness to simulate real data.
+
+### Modes
+
+There are different execution modes: *mapping* and *manual*
+
+#### Mapping
+
+This mode is useful when testing, to enable it, make sure that the `TEST` flag is set to `true`, it should be the default tho.
+
+This mode is automatic in the sense that there is no user interaction. It will scan the environment, which it will populate with random obstacles. This mode is meant to be expanded with a pahtfinding algorithm such as [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), which doesn't depend on knowing the goal location, unlike [A*](https://en.wikipedia.org/wiki/A*_search_algorithm). Another very efficent option could be [Depth Fist Search (DFS)](https://en.wikipedia.org/wiki/Depth-first_search), which when used to pathfind, likes to slalom, which is what the course shape is intended to be, making it probably the fastest algorithm that you could use.
+
+#### Manual
+
+The manual mode is meant to be tested on the ground, with a real arduino connected to a computer, or alternatively in a simulating software like [Tinkercad](https://tinkercad.com). To use it make sure to build the program with:
+
+```bash
+make TESTING=false
+```
+
+This mode allows you to enter the movement of the rover by entering it as input in the Serial Monitor. This requires the Arduino to be plugged to a computer though. The mode comes with many interesting features such as:
+
+- Self-spinning
+- Independent sensor movement
+- Input controlled movement
+- Customizable detection range
+- LED lights to display movement status
+- Safety mechanism that avoids near obstacles
+
+To control it, just type the commands that appear in the Serial Monitor when triggering the Arduino, submited by pressing `Enter`. They are as follows:
+
+```
+f: forward
+b: backward
+r: right
+l: left
+```
+
+Although they can be remapped to [WASD](https://en.wikipedia.org/w/index.php?title=Arrow_keys#WASD_keys) to provide a AAA game experience.
+
+
+## Credits
+
+To the endless threads and posts on: Reddit, Stack Overflow, W3Schools and the Arduino Forum. Most of the features wouldn't be here without their amazing guides and explanations. :)
