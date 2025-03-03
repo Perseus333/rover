@@ -30,6 +30,17 @@ class FakeSerial {
         }
 };
 
+
+class Servo {
+    public:
+        void attach(byte pin) {
+            (void)pin;
+        }
+        void write(int angle) {
+            (void)angle;
+        }
+};
+
 inline FakeSerial Serial;
 
 inline void pinMode(byte pin, void* output) {
@@ -48,8 +59,15 @@ inline void analogWrite(byte pin, int arg) {
     (void)pin;
     (void)arg;
 }
-inline void delay(char* time) {
+inline void delay_(int time) {
     (void)time;
+}
+inline void delayMicroseconds(int time) {
+    (void)time;
+}
+inline int pulseIn(byte pin, void* arg) {
+    (void)pin;
+    (void)arg;
 }
 
 extern void* INPUT;
